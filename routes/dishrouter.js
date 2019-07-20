@@ -20,6 +20,7 @@ dishRouter.route('/')/*.all((req,res,next) => {      //app.all() : no matter whi
     //res.end('Will send all the dishes to you!');
     Dishes.find({})
     .then((dishes) => {
+        console.log('--> dishes found :\n', dishes);
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');
         res.json(dishes);
@@ -45,10 +46,13 @@ dishRouter.route('/')/*.all((req,res,next) => {      //app.all() : no matter whi
     //res.end('Deleting all the dishes!');
     //removing all the dishes from the server!!
     Dishes.remove({})
-    .then((response) => {
-        es.statusCode = 200;
+    //Dishes.collection.drop()       //dropping a collection
+    //mongoose.connection.dropCollection('dishes')
+    .then((resp) => {
+        console.log('--> dishes deleted!');
+        res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');
-        res.json(response);
+        res.json(resp);
     }).catch((err) => {
         next(err);      //passing the ERROR to the overall error-handler
     })
@@ -65,6 +69,7 @@ dishRouter.route('/:dishId')/*.all((req, res, next) => {
     //req.params.dishId + ' to you!');
     Dishes.findById(req.params.dishId)
     .then((dishes) => {
+        console.log('--> dish found :\n', dishes);
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');
         res.json(dishes);
@@ -98,7 +103,8 @@ dishRouter.route('/:dishId')/*.all((req, res, next) => {
     //req.params.dishId);
     Dishes.findByIdAndRemove(req.params.dishId)
     .then((response) => {
-        es.statusCode = 200;
+        console.log('--> dish deleted!');
+        res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');
         res.json(response);
     }).catch((err) => {
