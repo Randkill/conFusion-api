@@ -10,6 +10,25 @@ var dishRouter = require('./routes/dishrouter');
 var leaderRouter = require('./routes/leaderrouter');
 var promoRouter = require('./routes/promorouter');
 
+const mongoose = require('mongoose');
+mongoose.Promise = require('bluebird');
+
+const Dishes = require('./models/dishes');
+
+const url = 'mongodb://localhost:27017/conFusion';
+
+const connect = mongoose.connect(url, {
+  useNewUrlParser: true,
+    useFindAndModify: true
+})
+
+connect.then((db) => {
+  console.log('Connected correctly to the server!');
+}).catch((err) => {
+  console.log(err);
+});
+
+
 var app = express();
 
 // view engine setup
