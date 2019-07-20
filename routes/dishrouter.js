@@ -56,25 +56,54 @@ dishRouter.route('/')/*.all((req,res,next) => {      //app.all() : no matter whi
 
 //now handling /dishes/:dishId
 
-dishRouter.route('/:dishId').all((req, res, next) => {
+dishRouter.route('/:dishId')/*.all((req, res, next) => {
     res.statusCode = 200;
     res.setHeader('Content-Type', 'text/html');
     next();
-}).get((req, res, next) => {
-    res.end('Will send details of the dish : ' +
-    req.params.dishId + ' to you!');
+})*/.get((req, res, next) => {
+    //res.end('Will send details of the dish : ' +
+    //req.params.dishId + ' to you!');
+    Dishes.findById(req.params.dishId)
+    .then((dishes) => {
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.json(dishes);
+    }).catch((err) => {
+        next(err);      //passing the ERROR to the overall error-handler
+    })
 }).post((req, res, next) => {
     res.statusCode = 403;
     res.end('Post operation not supported on /dishes/' +
     req.params.dishId +'!');
-}).post((req, res, next) => {
-    res.write('Updating the dish : ' + req.params.dishId + '\n');      //add a line to reply messege
+}).put((req, res, next) => {
+    /*res.write('Updating the dish : ' + req.params.dishId + '\n');      //add a line to reply messege
     res.end('Will update the dish : ' +
     req.body.name + ' with details : ' +
-    req.body.description);
+    req.body.description);*/
+    Dishes.findByIdAndUpdate(req.params.dishId, {
+        $set: req.body
+    }, {
+        new: true       //returning the updated dish
+    })
+    .then((dish) => {
+        console.log('--> dish created :\n', dish);
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.json(dish);
+    }).catch((err) => {
+        next(err);      //passing the ERROR to the overall error-handler
+    })
 }).delete((req, res, next) => {
-    res.end('Deleting dish : ' +
-    req.params.dishId);
+    //res.end('Deleting dish : ' +
+    //req.params.dishId);
+    Dishes.findByIdAndRemove(req.params.dishId)
+    .then((response) => {
+        es.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.json(response);
+    }).catch((err) => {
+        next(err);      //passing the ERROR to the overall error-handler
+    })
 });
 
 module.exports = dishRouter;
